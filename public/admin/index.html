@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Admin Login | Djibril</title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- LOGIN -->
+
+    <div
+        class="login-page"
+        id="loginPage"
+    >
+
+        <div class="login-card">
+
+            <div class="login-logo">
+                <span>&lt;</span>Djibril<span>/&gt;</span>
+            </div>
+
+            <div class="login-icon">
+
+                <i class="fa-solid fa-shield-halved"></i>
+
+            </div>
+
+            <h1>
+                Admin Login
+            </h1>
+
+            <p>
+                Manage your client messages
+            </p>
+
+
+            <form id="loginForm">
+
+                <div class="input-group">
+
+                    <label>
+                        Username
+                    </label>
+
+                    <div class="input-box">
+
+                        <i class="fa-regular fa-user"></i>
+
+                        <input
+                            type="text"
+                            id="username"
+                            required
+                            autocomplete="username"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>
+                        Password
+                    </label>
+
+                    <div class="input-box">
+
+                        <i class="fa-solid fa-lock"></i>
+
+                        <input
+                            type="password"
+                            id="password"
+                            required
+                            autocomplete="current-password"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="login-button"
+                    type="submit"
+                >
+
+                    <span>Login</span>
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </button>
+
+
+                <p
+                    class="error"
+                    id="loginError"
+                ></p>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- DASHBOARD -->
+
+    <div
+        class="dashboard"
+        id="dashboard"
+    >
+
+        <header class="topbar">
+
+            <div class="brand">
+
+                <span>&lt;</span>Djibril<span>/&gt;</span>
+
+            </div>
+
+
+            <div class="topbar-right">
+
+                <span id="adminUsername"></span>
+
+                <button
+                    id="logoutButton"
+                    class="logout-button"
+                >
+
+                    <i class="fa-solid fa-right-from-bracket"></i>
+
+                    Logout
+
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <main class="dashboard-content">
+
+
+            <div class="dashboard-title">
+
+                <div>
+
+                    <p>
+                        Administration
+                    </p>
+
+                    <h1>
+                        Messages
+                    </h1>
+
+                </div>
+
+                <button
+                    id="refreshButton"
+                    class="refresh-button"
+                >
+
+                    <i class="fa-solid fa-rotate"></i>
+
+                    Refresh
+
+                </button>
+
+            </div>
+
+
+            <!-- STATISTICS -->
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon total">
+
+                        <i class="fa-solid fa-envelope"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>Total</span>
+
+                        <strong id="totalMessages">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon unread">
+
+                        <i class="fa-solid fa-envelope-open-text"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>Unread</span>
+
+                        <strong id="unreadMessages">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon read">
+
+                        <i class="fa-solid fa-envelope-open"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>Read</span>
+
+                        <strong id="readMessages">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon replied">
+
+                        <i class="fa-solid fa-reply"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>Replied</span>
+
+                        <strong id="repliedMessages">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- MESSAGES -->
+
+            <section class="messages-section">
+
+                <div class="messages-header">
+
+                    <h2>
+                        Client Messages
+                    </h2>
+
+                    <select id="statusFilter">
+
+                        <option value="all">
+                            All messages
+                        </option>
+
+                        <option value="unread">
+                            Unread
+                        </option>
+
+                        <option value="read">
+                            Read
+                        </option>
+
+                        <option value="replied">
+                            Replied
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div
+                    id="messagesList"
+                    class="messages-list"
+                >
+
+                    <div class="loading">
+
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+
+                        Loading messages...
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- MESSAGE MODAL -->
+
+    <div
+        class="modal"
+        id="messageModal"
+    >
+
+        <div class="modal-card">
+
+            <button
+                class="modal-close"
+                id="modalClose"
+            >
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+
+            <div class="modal-header">
+
+                <div class="modal-avatar">
+
+                    <i class="fa-regular fa-user"></i>
+
+                </div>
+
+                <div>
+
+                    <h2 id="modalName">
+                        Client
+                    </h2>
+
+                    <a
+                        href="#"
+                        id="modalEmail"
+                    >
+                        email@example.com
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-meta">
+
+                <span id="modalStatus">
+                    unread
+                </span>
+
+                <time id="modalDate">
+                </time>
+
+            </div>
+
+
+            <h3 id="modalSubject">
+                Subject
+            </h3>
+
+
+            <div
+                class="modal-message"
+                id="modalMessage"
+            >
+            </div>
+
+
+            <div class="modal-actions">
+
+                <a
+                    id="replyButton"
+                    class="action-button reply"
+                    href="#"
+                >
+
+                    <i class="fa-solid fa-reply"></i>
+
+                    Reply by Email
+
+                </a>
+
+
+                <button
+                    id="markRepliedButton"
+                    class="action-button"
+                >
+
+                    <i class="fa-solid fa-check"></i>
+
+                    Mark Replied
+
+                </button>
+
+
+                <button
+                    id="deleteMessageButton"
+                    class="action-button danger"
+                >
+
+                    <i class="fa-solid fa-trash"></i>
+
+                    Delete
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="/admin/script.js"></script>
+
+</body>
+
+</html>
