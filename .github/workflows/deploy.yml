@@ -1,0 +1,37 @@
+name: Deploy Portfolio to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          port: ${{ secrets.VPS_PORT }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            set -e
+
+            cd /home/administrator/portofolio
+
+            echo "Pulling latest code..."
+            git pull origin main
+
+            echo "Installing dependencies..."
+            npm install --omit=dev
+
+            echo "Reloading PM2..."
+            pm2 reload vimate-portfolio
+
+            echo "Saving PM2 process list..."
+            pm2 save
+
+            echo "Deployment completed!"
