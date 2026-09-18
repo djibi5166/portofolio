@@ -26,7 +26,7 @@ jobs:
             git pull origin main
 
             echo "Installing dependencies..."
-            npm install --omit=dev
+            npm ci --omit=dev
 
             echo "Reloading PM2..."
             pm2 reload vimate-portfolio
