@@ -1,5 +1,8 @@
-## for modues ##
 node_modules/
+
 # Environment variables
 .env
-#database/messages.db
+
+# Local/production databases
+database/*.db
+database/*.db.backup
