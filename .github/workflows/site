@@ -1,4 +1,4 @@
-name: Preview Static Site
+name: Preview Static Sites
 
 on:
   push:
