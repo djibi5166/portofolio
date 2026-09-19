@@ -2,7 +2,7 @@ name: Preview Static Sites
 
 on:
   push:
-  branches:
+   branches:
       - main
 
 jobs:
