@@ -513,3 +513,52 @@ if (yearElement) {
         new Date().getFullYear();
 
 }
+
+/* =========================================================
+   VISITOR ANALYTICS
+========================================================= */
+
+async function trackVisit() {
+
+    try {
+
+        await fetch(
+            "/api/visit",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    path:
+                        window.location.pathname +
+                        window.location.search
+
+                }),
+
+                keepalive: true
+
+            }
+        );
+
+    } catch (error) {
+
+        /*
+         * Analytics errors must never
+         * break the portfolio.
+         */
+
+        console.debug(
+            "Visitor analytics unavailable"
+        );
+
+    }
+
+}
+
+
+trackVisit();

@@ -248,11 +248,11 @@ async function loadDashboard() {
 
     await Promise.all([
         loadStats(),
-        loadMessages()
+        loadMessages(),
+        loadVisitorStats()
     ]);
 
 }
-
 
 /* =========================================================
    LOAD STATS
@@ -300,7 +300,253 @@ async function loadStats() {
 
 }
 
+/* =========================================================
+   LOAD VISITOR STATISTICS
+========================================================= */
 
+async function loadVisitorStats() {
+
+    try {
+
+        const data =
+            await api(
+                "/api/admin/visitor-stats"
+            );
+
+
+        const stats =
+            data.stats;
+
+
+        document.getElementById(
+            "totalVisits"
+        ).textContent =
+            formatNumber(
+                stats.totalVisits
+            );
+
+
+        document.getElementById(
+            "uniqueVisitors"
+        ).textContent =
+            formatNumber(
+                stats.uniqueVisitors
+            );
+
+
+        document.getElementById(
+            "todayVisits"
+        ).textContent =
+            formatNumber(
+                stats.todayVisits
+            );
+
+
+        document.getElementById(
+            "yesterdayVisits"
+        ).textContent =
+            formatNumber(
+                stats.yesterdayVisits
+            );
+
+
+        document.getElementById(
+            "monthVisits"
+        ).textContent =
+            formatNumber(
+                stats.monthVisits
+            );
+
+
+        renderAnalyticsList(
+            "deviceStats",
+            stats.devices
+        );
+
+
+        renderAnalyticsList(
+            "browserStats",
+            stats.browsers
+        );
+
+
+        renderDailyStats(
+            stats.daily
+        );
+
+
+        document.getElementById(
+            "analyticsStatus"
+        ).textContent =
+            "Live";
+
+
+    } catch (error) {
+
+        console.error(
+            "Visitor analytics:",
+            error
+        );
+
+
+        document.getElementById(
+            "analyticsStatus"
+        ).textContent =
+            "Unavailable";
+
+    }
+
+}
+
+
+/* =========================================================
+   FORMAT NUMBER
+========================================================= */
+
+function formatNumber(number) {
+
+    return Number(
+        number || 0
+    ).toLocaleString();
+
+}
+
+
+/* =========================================================
+   ANALYTICS LIST
+========================================================= */
+
+function renderAnalyticsList(
+    elementId,
+    data
+) {
+
+    const element =
+        document.getElementById(
+            elementId
+        );
+
+
+    if (!data) {
+
+        element.textContent =
+            "No data";
+
+        return;
+
+    }
+
+
+    const entries =
+        Object.entries(data)
+            .sort(
+                (a, b) =>
+                    b[1] - a[1]
+            );
+
+
+    if (!entries.length) {
+
+        element.innerHTML = `
+            <span style="color:var(--muted)">
+                No data yet
+            </span>
+        `;
+
+        return;
+
+    }
+
+
+    element.innerHTML =
+        entries
+            .map(
+                ([name, count]) => `
+                    <div class="analytics-item">
+
+                        <span>
+                            ${escapeHtml(name)}
+                        </span>
+
+                        <strong>
+                            ${formatNumber(count)}
+                        </strong>
+
+                    </div>
+                `
+            )
+            .join("");
+
+}
+
+
+/* =========================================================
+   DAILY STATS
+========================================================= */
+
+function renderDailyStats(
+    daily
+) {
+
+    const element =
+        document.getElementById(
+            "dailyStats"
+        );
+
+
+    if (!daily || !daily.length) {
+
+        element.innerHTML = `
+            <span style="color:var(--muted)">
+                No data yet
+            </span>
+        `;
+
+        return;
+
+    }
+
+
+    element.innerHTML =
+        daily
+            .map(item => {
+
+                const date =
+                    new Date(
+                        item.date +
+                        "T00:00:00"
+                    );
+
+
+                const day =
+                    date.toLocaleDateString(
+                        undefined,
+                        {
+                            weekday: "short"
+                        }
+                    );
+
+
+                return `
+                    <div class="daily-item">
+
+                        <span class="day">
+                            ${day}
+                        </span>
+
+                        <strong>
+                            ${formatNumber(
+                                item.visits
+                            )}
+                        </strong>
+
+                    </div>
+                `;
+
+            })
+            .join("");
+
+}
 /* =========================================================
    LOAD MESSAGES
 ========================================================= */
@@ -830,7 +1076,47 @@ function escapeHtml(value) {
 
 }
 
+/* =========================================================
+   VISITOR ANALYTICS
+========================================================= */
 
+async function trackVisit() {
+
+    try {
+
+        await fetch(
+            "/api/visit",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+                body: JSON.stringify({
+                    path:
+                        window.location.pathname +
+                        window.location.search
+                }),
+                keepalive: true
+            });
+
+    } catch (error) {
+
+        /*
+         * Analytics errors should never
+         * affect the website.
+         */
+        console.debug(
+            "Analytics unavailable"
+        );
+
+    }
+
+}
+
+
+trackVisit();
 /* =========================================================
    START
 ========================================================= */
